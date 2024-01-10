@@ -1,0 +1,107 @@
+{% extends 'salesleads/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <div class="container">
+        <h2>Zmiany w leadach:</h2>
+        <table class="table table-sm table-hover">
+            <tr>
+                <th style="width: 20%">Data</th>
+                <th style="width: 20%">Lead</th>
+                <th style="width: 20%">Akcja</th>
+                <th style="width: 20%">Typ</th>
+                <th style="width: 20%">Użytkownik</th>
+            </tr>
+            {% for t in saleslead_history %}
+                <tr>
+                    <td>{{ t.history_date }}</td>
+                    <td>{{ t.company_name }}</td>
+                    <td>{{ t.get_history_type_display }}</td>
+                    <td><a href="">{{ t.history_change_reason }}</a></td>
+                    <td>{{ t.history_user }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <h2>Komentarze:</h2>
+        <table class="table table-sm table-hover">
+            <tr>
+                <th style="width: 20%">Data</th>
+                <th style="width: 20%">Lead</th>
+                <th style="width: 20%">Akcja</th>
+                <th style="width: 20%">Typ</th>
+                <th style="width: 20%">Użytkownik</th>
+            </tr>
+            {% for t in comment_history %}
+                <tr>
+                    <td>{{ t.history_date }}</td>
+                    <td>{{ t.saleslead.company_name }}</td>
+                    <td>{{ t.get_history_type_display }}</td>
+                    <td><a href="{% url 'comment-update' t.id %}">{{ t.history_change_reason }}</a></td>
+                    <td>{{ t.history_user }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <h2>Kontakty:</h2>
+        <table class="table table-sm table-hover">
+            <tr>
+                <th style="width: 20%">Data</th>
+                <th style="width: 20%">Lead</th>
+                <th style="width: 20%">Akcja</th>
+                <th style="width: 20%">Typ</th>
+                <th style="width: 20%">Użytkownik</th>
+            </tr>
+            {% for t in contactperson_history %}
+                <tr>
+                    <td>{{ t.history_date }}</td>
+                    <td>{{ t.saleslead.company_name }}</td>
+                    <td>{{ t.get_history_type_display }}</td>
+                    <td><a href="{% url 'contactperson-update' t.id %}">{{ t.history_change_reason }}</a></td>
+                    <td>{{ t.history_user }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <h2>Zaplanowane działania:</h2>
+        <table class="table table-sm table-hover">
+            <tr>
+                <th style="width: 20%">Data</th>
+                <th style="width: 20%">Lead</th>
+                <th style="width: 20%">Akcja</th>
+                <th style="width: 20%">Typ</th>
+                <th style="width: 20%">Użytkownik</th>
+            </tr>
+            {% for t in plannedactivity_history %}
+                <tr>
+                    <td>{{ t.history_date }}</td>
+                    <td>{{ t.saleslead.company_name }}</td>
+                    <td>{{ t.get_history_type_display }}</td>
+                    <td><a href="{% url 'plannedactivity-update' t.id %}">{{ t.history_change_reason }}</a></td>
+                    <td>{{ t.history_user }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Together:</h2>
+        <table class="table table-sm table-hover">
+            <tr>
+                <th style="width: 20%">Data</th>
+                <th style="width: 20%">Lead</th>
+                <th style="width: 20%">Akcja</th>
+                <th style="width: 20%">Typ</th>
+                <th style="width: 20%">Użytkownik</th>
+            </tr>
+            {% for t in together %}
+                <tr>
+                    <td>{{ t.0 }}</td>
+                    <td>{{ t.1 }}</td>
+                    <td>{{ t.2 }}</td>
+                    <td><a href="">{{ t.3 }}</a></td>
+                    <td>{{ t.4 }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+
+    </div>
+
+
+{% endblock %}

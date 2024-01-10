@@ -1,0 +1,12 @@
+<footer class="navbar sticky-bottom bg-custom-2">
+    <div class="container">
+        <div class="col-md-8 offset-md-2 text-white">
+            <p>Current time: {{ now }}
+                Version: {{ version }}
+                {% if user.is_authenticated %}
+                    Zalogowany jako: {{ user.username }} </p>
+                    <p align="center"><a href="{% url 'logout' %}" class="text-white">Wyloguj</a></p>
+                {% endif %}
+        </div>
+    </div>
+</footer>

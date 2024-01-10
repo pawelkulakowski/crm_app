@@ -1,0 +1,308 @@
+{% extends 'salesleads/base.html' %}
+{% load static %}
+{% load range %}
+{% block title %}Widok mapy{% endblock %}
+{% block content %}
+    <main role="main" class="container-fluid" style="margin-top: 15px;">
+        <form method="GET" action=".">
+            <div class="form-row">
+                <div class="form-group col-md-2 offset-1">
+                    <h5>Status:</h5>
+                    {% for type in types %}
+                        {% if type.0|slugify in statuses %}
+                            <input type="checkbox" class="form-check-input" checked name="status" value="{{ type.0 }}">
+                            <label class="form-check-label" for="exampleCheck1">{{ type.1 }}</label>
+                            <br>
+
+                        {% else %}
+                            <input type="checkbox" class="form-check-input" name="status" value="{{ type.0 }}">
+                            <label class="form-check-label" for="exampleCheck1">{{ type.1 }}</label>
+                            <br>
+
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="form-group col-md-2 ">
+                    <label for="DateMin">Data początkowa</label>
+                    <input type="date" class="form-control" id="DateMin" name="date_min"
+                           value="{{ date_min }}">
+                    <label for="DateMax">Data końcowa</label>
+                    <input type="date" class="form-control" id="DateMax" name="date_max"
+                           value="{{ date_max }}">
+                </div>
+            </div>
+            </div>
+            <button type="submit" class="btn btn-primary offset-1">Wyszukaj</button>
+        </form>
+        <hr>
+
+
+        <div class="col-md-12 mt-4">
+            <div id="m" style="width: auto; height: 700px;"></div>
+
+            <script type="text/javascript">
+                var ColorIcon = L.Icon.extend({
+                    options: {
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    }
+                });
+                var m = L.map('m').setView([20, 20], 3);
+                var greenIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png'})
+                var redIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png'})
+                var violetIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png'})
+                var yellowIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png'})
+                var orangeIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png'})
+                var greyIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png'})
+                var blackIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png'})
+
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+
+
+                var blueLayer = new L.LayerGroup();
+                var redLayer = new L.LayerGroup();
+                var violetLayer = new L.LayerGroup();
+                var greyLayer = new L.LayerGroup();
+                var orangeLayer = new L.LayerGroup();
+
+
+
+                {% for lead in object_list %}
+                    {% if user.id == 1 %} //Admin logged
+                        {% if lead.user.id == 7 %} //Dawid
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: redIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a><br>{% if lead.score >= 1 %}{% for value in lead.score|range %}<i class="fas fa-star" style="color: gold"></i>{% endfor %}{% else %}{% for value in 5|range %}<i class="fas fa-star" style="color: grey"></i>{% endfor %}{% endif %}<br>{{ lead.get_potential_display|default:'brak danych' }}');
+                            redLayer.addLayer(marker)
+                        {% elif lead.user.id == 6 %} //Oleksii
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greenIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a><br>{% if lead.score >= 1 %}{% for value in lead.score|range %}<i class="fas fa-star" style="color: gold"></i>{% endfor %}{% else %}{% for value in 5|range %}<i class="fas fa-star" style="color: grey"></i>{% endfor %}{% endif %}<br>{{ lead.get_potential_display|default:'brak danych' }}');
+                            blueLayer.addLayer(marker)
+                        {% elif lead.user.id == 4 %} //Ania
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: violetIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a><br>{% if lead.score >= 1 %}{% for value in lead.score|range %}<i class="fas fa-star" style="color: gold"></i>{% endfor %}{% else %}{% for value in 5|range %}<i class="fas fa-star" style="color: grey"></i>{% endfor %}{% endif %}<br>{{ lead.get_potential_display|default:'brak danych' }}');
+                            violetLayer.addLayer(marker)
+                        {% elif lead.user.id == 8 %} //Pawel
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greyIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a><br>{% if lead.score >= 1 %}{% for value in lead.score|range %}<i class="fas fa-star" style="color: gold"></i>{% endfor %}{% else %}{% for value in 5|range %}<i class="fas fa-star" style="color: grey"></i>{% endfor %}{% endif %}<br>{{ lead.get_potential_display|default:'brak danych' }}');
+                            greyLayer.addLayer(marker)
+                        {% elif lead.user.id == 5 %} //Aleksander
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: orangeIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a><br>{% if lead.score >= 1 %}{% for value in lead.score|range %}<i class="fas fa-star" style="color: gold"></i>{% endfor %}{% else %}{% for value in 5|range %}<i class="fas fa-star" style="color: grey"></i>{% endfor %}{% endif %}<br>{{ lead.get_potential_display|default:'brak danych' }}');
+                            orangeLayer.addLayer(marker)
+                        {% endif %}
+                    {% elif user.id == 7 %} //Dawid_logged
+                        {% if lead.user.id == 7 %} //Dawid
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: redIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a><br>{% if lead.score >= 1 %}{% for value in lead.score|range %}<i class="fas fa-star" style="color: gold"></i>{% endfor %}{% else %}{% for value in 5|range %}<i class="fas fa-star" style="color: grey"></i>{% endfor %}{% endif %}<br>{{ lead.get_potential_display|default:'brak danych' }}');
+                            redLayer.addLayer(marker)
+                        {% elif lead.user.id == 6 %} //Oleksii
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greenIcon}).bindPopup('{{ lead }}');
+                            blueLayer.addLayer(marker)
+                        {% elif lead.user.id == 4 %} //Ania
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: violetIcon}).bindPopup('{{ lead }}');
+                            violetLayer.addLayer(marker)
+                        {% elif lead.user.id == 8 %} //Pawel
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greyIcon}).bindPopup('{{ lead }}');
+                            greyLayer.addLayer(marker)
+                        {% elif lead.user.id == 5 %} //Aleksander
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: orangeIcon}).bindPopup('{{ lead }}');
+                            orangeLayer.addLayer(marker)
+                        {% endif %}
+                    {% elif user.id == 6 %} //Oleksii_logged
+                        {% if lead.user.id == 7 %} //Dawid
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: redIcon}).bindPopup('{{ lead }}');
+                            redLayer.addLayer(marker)
+                        {% elif lead.user.id == 6 %} //Oleksii
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greenIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a><br>{% if lead.score >= 1 %}{% for value in lead.score|range %}<i class="fas fa-star" style="color: gold"></i>{% endfor %}{% else %}{% for value in 5|range %}<i class="fas fa-star" style="color: grey"></i>{% endfor %}{% endif %}<br>{{ lead.get_potential_display|default:'brak danych' }}');
+                            blueLayer.addLayer(marker)
+                        {% elif lead.user.id == 4 %} //Ania
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: violetIcon}).bindPopup('{{ lead }}');
+                            violetLayer.addLayer(marker)
+                        {% elif lead.user.id == 8 %} //Pawel
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greyIcon}).bindPopup('{{ lead }}');
+                            greyLayer.addLayer(marker)
+                        {% elif lead.user.id == 5 %} //Aleksander
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: orangeIcon}).bindPopup('{{ lead }}');
+                            orangeLayer.addLayer(marker)
+                        {% endif %}
+                    {% elif user.id == 4 %} //Ania_logged
+                        {% if lead.user.id == 7 %} //Dawid
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: redIcon}).bindPopup('{{ lead }}');
+                            redLayer.addLayer(marker)
+                        {% elif lead.user.id == 6 %} //Oleksii
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greenIcon}).bindPopup('{{ lead }}');
+                            blueLayer.addLayer(marker)
+                        {% elif lead.user.id == 4 %} //Ania
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: violetIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a><br>{% if lead.score >= 1 %}{% for value in lead.score|range %}<i class="fas fa-star" style="color: gold"></i>{% endfor %}{% else %}{% for value in 5|range %}<i class="fas fa-star" style="color: grey"></i>{% endfor %}{% endif %}<br>{{ lead.get_potential_display|default:'brak danych' }}');
+                            violetLayer.addLayer(marker)
+                        {% elif lead.user.id == 8 %} //Pawel
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greyIcon}).bindPopup('{{ lead }}');
+                            greyLayer.addLayer(marker)
+                        {% elif lead.user.id == 5 %} //Aleksander
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: orangeIcon}).bindPopup('{{ lead }}');
+                            orangeLayer.addLayer(marker)
+                        {% endif %}
+                    {% elif user.id == 8 %} //Pawel_logged
+                        {% if lead.user.id == 7 %} //Dawid
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: redIcon}).bindPopup('{{ lead }}');
+                            redLayer.addLayer(marker)
+                        {% elif lead.user.id == 6 %} //Oleksii
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greenIcon}).bindPopup('{{ lead }}');
+                            blueLayer.addLayer(marker)
+                        {% elif lead.user.id == 4 %} //Ania
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: violetIcon}).bindPopup('{{ lead }}');
+                            violetLayer.addLayer(marker)
+                        {% elif lead.user.id == 8 %} //Pawel
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greyIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a><br>{% if lead.score >= 1 %}{% for value in lead.score|range %}<i class="fas fa-star" style="color: gold"></i>{% endfor %}{% else %}{% for value in 5|range %}<i class="fas fa-star" style="color: grey"></i>{% endfor %}{% endif %}<br>{{ lead.get_potential_display|default:'brak danych' }}');
+                            greyLayer.addLayer(marker)
+                        {% elif lead.user.id == 5 %} //Aleksander
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: orangeIcon}).bindPopup('{{ lead }}');
+                            orangeLayer.addLayer(marker)
+                        {% endif %}
+                    {% elif user.id == 5 %} //Aleksander_logged
+                        {% if lead.user.id == 7 %} //Dawid
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: redIcon}).bindPopup('{{ lead }}');
+                            redLayer.addLayer(marker)
+                        {% elif lead.user.id == 6 %} //Oleksii
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greenIcon}).bindPopup('{{ lead }}');
+                            blueLayer.addLayer(marker)
+                        {% elif lead.user.id == 4 %} //Ania
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: violetIcon}).bindPopup('{{ lead }}');
+                            violetLayer.addLayer(marker)
+                        {% elif lead.user.id == 8 %} //Pawel
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greyIcon}).bindPopup('{{ lead }}');
+                            greyLayer.addLayer(marker)
+                        {% elif lead.user.id == 5 %} //Aleksander
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: orangeIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a><br>{% if lead.score >= 1 %}{% for value in lead.score|range %}<i class="fas fa-star" style="color: gold"></i>{% endfor %}{% else %}{% for value in 5|range %}<i class="fas fa-star" style="color: grey"></i>{% endfor %}{% endif %}<br>{{ lead.get_potential_display|default:'brak danych' }}');
+                            orangeLayer.addLayer(marker)
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                redLayer.addTo(m);
+                blueLayer.addTo(m);
+                violetLayer.addTo(m);
+                greyLayer.addTo(m);
+                orangeLayer.addTo(m);
+
+                var toggle_de = L.easyButton({
+                    states: [{
+                        icon: '<i class="fa fa-map-marker " style="color: red"></i>',
+                        stateName: 'remove-markers',
+                        onClick: function (control) {
+                            m.removeLayer(redLayer);
+                            control.state('add-markers');
+                        },
+                        title: 'ME-DE'
+                    },
+                        {
+                            stateName: 'add-markers',
+                            icon: 'fa-map-marker',
+                            title: 'ME-DE',
+                            onClick: function (control) {
+                                m.addLayer(redLayer);
+                                control.state('remove-markers');
+                            }
+                        }]
+                });
+
+
+                var toggle_it = L.easyButton({
+                    states: [{
+                        icon: '<i class="fa fa-map-marker " style="color: green"></i>',
+                        stateName: 'remove-markers',
+                        onClick: function (control) {
+                            m.removeLayer(blueLayer);
+                            control.state('add-markers');
+                        },
+                        title: 'ME-IT'
+                    },
+                        {
+                            stateName: 'add-markers',
+                            icon: '<i class="fa fa-map-marker " style="color: darkgreen"></i>',
+                            title: 'ME-IT',
+                            onClick: function (control) {
+                                m.addLayer(blueLayer);
+                                control.state('remove-markers');
+                            }
+                        }]
+                });
+
+
+                var toggle_nl = L.easyButton({
+                    states: [{
+                        icon: '<i class="fa fa-map-marker " style="color: violet"></i>',
+                        stateName: 'remove-markers',
+                        onClick: function (control) {
+                            m.removeLayer(violetLayer);
+                            control.state('add-markers');
+                        },
+                        title: 'ME-NL'
+                    },
+                        {
+                            stateName: 'add-markers',
+                            icon: '<i class="fa fa-map-marker fa-10ex " style="color: violet"></i>',
+                            title: 'ME-NL',
+                            onClick: function (control) {
+                                m.addLayer(violetLayer);
+                                control.state('remove-markers');
+                            }
+                        }]
+                });
+
+
+                var toggle_pe = L.easyButton({
+                    states: [{
+                        icon: '<i class="fa fa-map-marker " style="color: grey"></i>',
+                        stateName: 'remove-markers',
+                        onClick: function (control) {
+                            m.removeLayer(greyLayer);
+                            control.state('add-markers');
+                        },
+                        title: 'ME-PE'
+                    },
+                        {
+                            stateName: 'add-markers',
+                            icon: '<i class="fa fa-map-marker " style="color: darkgray"></i>',
+                            title: 'ME-PE',
+                            onClick: function (control) {
+                                m.addLayer(greyLayer);
+                                control.state('remove-markers');
+                            }
+                        }]
+                });
+
+
+                var toggle_ru = L.easyButton({
+                    states: [{
+                        icon: '<i class="fa fa-map-marker " style="color: orange"></i>',
+                        stateName: 'remove-markers',
+                        onClick: function (control) {
+                            m.removeLayer(orangeLayer);
+                            control.state('add-markers');
+                        },
+                        title: 'ME-RU'
+                    },
+                        {
+                            stateName: 'add-markers',
+                            icon: '<i class="fa fa-map-marker " style="color: darkorange"></i>',
+                            title: 'ME-RU',
+                            onClick: function (control) {
+                                m.addLayer(orangeLayer);
+                                control.state('remove-markers');
+                            }
+                        }]
+                });
+
+                // start with an array of easy buttons
+                var buttons = [toggle_de, toggle_it, toggle_nl, toggle_pe, toggle_ru];
+
+
+                // build a toolbar with them
+                L.easyBar(buttons).addTo(m);
+
+
+            </script>
+        </div>
+        </div>
+
+    </main>
+    {% include 'salesleads/footer_sticky.html' %}
+{% endblock %}

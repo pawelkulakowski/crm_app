@@ -1,0 +1,52 @@
+<html>
+<head><title>Leaflet Essentials</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin=""/>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        html, body, #map {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+<div id="map" style="width: 600px; height: 400px"></div>
+<script>
+    var map = L.map('map');
+
+    var layer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png');
+    layer.addTo(map)
+
+    map.locate({setView: true, maxZoom: 10});
+
+    var marker;
+
+    map.on('click', function (e) {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        marker = new L.Marker(e.latlng).bindPopup(e.latlng.toString()).addTo(map);
+        console.log(e.latlng)
+    });
+
+   // map.on('click', function (e) {
+     //   var newmarker = L.marker(e.latlng, {
+       //     title: 'mypoint',
+         //   draggable: true
+       // }).bindPopup(e.latlng.toString()).addTo(map)
+   // });
+
+    // L.marker(e.latlng).addTo(map).bindPopup(paramters.toString());
+
+</script>
+</body>
+</html>

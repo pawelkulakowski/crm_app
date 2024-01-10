@@ -1,0 +1,191 @@
+{% extends 'salesleads/base.html' %}
+{% block title %}Lista użytkowników{% endblock %}
+
+{% block content %}
+    <div class="container mt-lg-2">
+        <div class="row">
+
+
+            <div class="col-md-12">
+                <div class="card card-body">
+                    <a class="btn btn-success btn-sm btn-block" data-toggle="collapse" href="#pierwszezamowienia">Pierwsze
+                        zamówienie</a>
+                    <div class="collapse show" id="pierwszezamowienia">
+                        <table class="table table-sm table-hover">
+                            <tr>
+                                <th style="width: 25%">Nazwa firmy</th>
+                                <th style="width: 25%">Data ostatniej aktywności</th>
+                                <th style="width: 40%">Komentarz</th>
+                                <th style="width: 5%"></th>
+                                <th style="width: 5%"></th>
+                            </tr>
+                            {% for saleslead in salesleads %}
+                                {% if saleslead.status == 1 %}
+                                    <tr>
+                                        <td>{{ saleslead.company_name }}</td>
+                                        <td>{{ saleslead.modified|date:'d E Y' }}</td>
+                                        <td>{{ saleslead.comment.first|truncatechars:30 }}</td>
+                                        <td><a class="btn btn-sm btn-light"
+                                               href="{% url 'saleslead-detail' saleslead.id %}">Edytuj</a></td>
+                                        <td>
+                                            <a class="btn btn-sm btn-dark" data-toggle="modal"
+                                               href="saleslead_delete_modal.html">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+<script>
+    $('.i-modall').on('click', function(e){
+      e.preventDefault();
+      $('#theModal').modal('show').find('.modal-content').load($(this).attr('href'));
+    });
+  </script>
+
+
+        <div class="col-md-12">
+            <div class="card card-body">
+                <a class="btn btn-warning  btn-sm btn-block" data-toggle="collapse" href="#zlozonewarunki">Złożone
+                    warunki/oferta</a>
+                <div class="collapse show" id="zlozonewarunki">
+                    <table class="table table-sm table-hover">
+                        <tr>
+                            <th style="width: 25%">Nazwa firmy</th>
+                            <th style="width: 25%">Data ostatniej aktywności</th>
+                            <th style="width: 40%">Komentarz</th>
+                            <th style="width: 5%"></th>
+                            <th style="width: 5%"></th>
+                        </tr>
+                        {% for saleslead in salesleads %}
+                            {% if saleslead.status == 2 %}
+                                <tr>
+                                    <td>{{ saleslead.company_name }}</td>
+                                    <td>{{ saleslead.modified|date:'d E Y' }}</td>
+                                    <td>{{ saleslead.comment.first|truncatechars:30 }}</td>
+                                    <td><a class="btn btn-sm btn-light"
+                                           href="{% url 'saleslead-detail' saleslead.id %}">Edytuj</a></td>
+                                    <td><a class="btn btn-sm btn-dark"
+                                           onclick="return confirm('Czy na pewno chcesz usunąć?')"
+                                           href="{% url 'saleslead-delete' saleslead.id %}"><i
+                                            class="fas fa-trash-alt"></i></a></td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-12">
+            <div class="card card-body">
+                <a class="btn btn-primary  btn-sm btn-block" data-toggle="collapse" href="#najbardziejobiecujace">Najbardziej
+                    obiecujące</a>
+                <div class="collapse show" id="najbardziejobiecujace">
+                    <table class="table table-sm table-hover">
+                        <tr>
+                            <th style="width: 25%">Nazwa firmy</th>
+                            <th style="width: 25%">Data ostatniej aktywności</th>
+                            <th style="width: 40%">Komentarz</th>
+                            <th style="width: 5%"></th>
+                            <th style="width: 5%"></th>
+                        </tr>
+                        {% for saleslead in salesleads %}
+                            {% if saleslead.status == 3 %}
+                                <tr>
+                                    <td>{{ saleslead.company_name }}</td>
+                                    <td>{{ saleslead.modified|date:'d E Y' }}</td>
+                                    <td>{{ saleslead.comment.first|truncatechars:30 }}</td>
+                                    <td><a class="btn btn-sm btn-light"
+                                           href="{% url 'saleslead-detail' saleslead.id %}">Edytuj</a></td>
+                                    <td><a class="btn btn-sm btn-dark"
+                                           onclick="return confirm('Czy na pewno chcesz usunąć?')"
+                                           href="{% url 'saleslead-delete' saleslead.id %}"><i
+                                            class="fas fa-trash-alt"></i></a></td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-12">
+            <div class="card card-body">
+                <a class="btn btn-secondary  btn-sm btn-block" data-toggle="collapse" href="#pozostaleaktywnosci">Pozostałe
+                    aktywności</a>
+                <div class="collapse show" id="pozostaleaktywnosci">
+                    <table class="table table-sm table-hover">
+                        <tr>
+                            <th style="width: 25%">Nazwa firmy</th>
+                            <th style="width: 25%">Data ostatniej aktywności</th>
+                            <th style="width: 40%">Komentarz</th>
+                            <th style="width: 5%"></th>
+                            <th style="width: 5%"></th>
+                        </tr>
+                        {% for saleslead in salesleads %}
+                            {% if saleslead.status == 4 %}
+                                <tr>
+                                    <td>{{ saleslead.company_name }}</td>
+                                    <td>{{ saleslead.modified|date:'d E Y' }}</td>
+                                    <td>{{ saleslead.comment.first|truncatechars:30 }}</td>
+                                    <td><a class="btn btn-sm btn-light"
+                                           href="{% url 'saleslead-detail' saleslead.id %}">Edytuj</a></td>
+                                    <td><a class="btn btn-sm btn-dark"
+                                           onclick="return confirm('Czy na pewno chcesz usunąć?')"
+                                           href="{% url 'saleslead-delete' saleslead.id %}"><i
+                                            class="fas fa-trash-alt"></i></a></td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-12">
+            <div class="card card-body">
+                <a class="btn btn-danger  btn-sm btn-block" data-toggle="collapse" href="#odrzucone">Odrzucone</a>
+                <div class="collapse show" id="odrzucone">
+                    <table class="table table-sm table-hover">
+                        <tr>
+                            <th style="width: 25%">Nazwa firmy</th>
+                            <th style="width: 25%">Data ostatniej aktywności</th>
+                            <th style="width: 40%">Komentarz</th>
+                            <th style="width: 5%"></th>
+                            <th style="width: 5%"></th>
+                        </tr>
+                        {% for saleslead in salesleads %}
+                            {% if saleslead.status == 5 %}
+                                <tr>
+                                    <td>{{ saleslead.company_name }}</td>
+                                    <td>{{ saleslead.modified|date:'d E Y' }}</td>
+                                    <td>{{ saleslead.comment.first|truncatechars:30 }}</td>
+                                    <td><a class="btn btn-sm btn-light"
+                                           href="{% url 'saleslead-detail' saleslead.id %}">Edytuj</a></td>
+                                    <td><a class="btn btn-sm btn-dark"
+                                           onclick="return confirm('Czy na pewno chcesz usunąć?')"
+                                           href="{% url 'saleslead-delete' saleslead.id %}"><i
+                                            class="fas fa-trash-alt"></i></a></td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    {% include 'salesleads/footer_sticky.html' %}
+
+{% endblock %}
+

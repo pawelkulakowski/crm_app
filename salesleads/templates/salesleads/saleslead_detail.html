@@ -1,0 +1,345 @@
+{% extends 'salesleads/base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+{% block javascript %}
+    <script src="{% static 'js/countries.js' %}"></script>
+{% endblock %}
+
+
+{% block title %}Szczegóły {{ saleslead.company_name }}{% endblock %}
+
+
+
+{% block content %}
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="menu1-tab" data-toggle="tab" href="#menu1" role="tab" aria-controls="menu1"
+               aria-selected="true">Informacje ogólne</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="menu2-tab" data-toggle="tab" href="#menu2" role="tab" aria-controls="menu2"
+               aria-selected="false">Dane adresowe</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+               aria-expanded="false">Osoby kontaktowe</a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" id="submenu1a-tab" data-toggle="tab" href="#submenu1a" role="tab"
+                   aria-controls="submenu1a"
+                   aria-selected="false">Lista</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" id="submenu2a-tab" data-toggle="tab" href="#submenu2a" role="tab"
+                   aria-controls="submenu2a"
+                   aria-selected="false">Dodaj</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+               aria-expanded="false">Zaplanowane działania</a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" id="submenu1-tab" data-toggle="tab" href="#submenu1" role="tab"
+                   aria-controls="submenu1"
+                   aria-selected="false">Lista</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" id="submenu3-tab" data-toggle="tab" href="#submenu3" role="tab"
+                   aria-controls="submenu3"
+                   aria-selected="false">Dodaj</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+               aria-expanded="false">Aktywności</a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" id="submenu1b-tab" data-toggle="tab" href="#submenu1b" role="tab"
+                   aria-controls="submenu1b"
+                   aria-selected="false">Lista</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" id="submenu2b-tab" data-toggle="tab" href="#submenu2b" role="tab"
+                   aria-controls="submenu2b"
+                   aria-selected="false">Dodaj</a>
+            </div>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+
+        <div class="tab-pane fade show active" id="menu1" role="tabpanel" aria-labelledby="menu1-tab">
+            <div class="container">
+                <div class="col-md-12">
+                    <form action="{% url 'saleslead-detail' saleslead.id %}" method="POST">
+                        {% csrf_token %}
+                        {{ forms.updatelead|crispy }}
+                        <div class="row">
+                            <div class="col-md-10">
+                                <button name='action' value='updatelead' type="submit" class="btn btn-success">
+                                    Zaktualizuj
+                                </button>
+                            </div>
+                            <div class="col-md-1">
+                                <a class="btn btn-sm btn-light"
+                                   href="{% url 'user-change' saleslead.id %}">Przekaż</a>
+                            </div>
+                            <div class="col-md-1">
+                                <a class="btn btn-sm btn-dark"
+                                   onclick="return confirm('Czy na pewno chcesz usunąć?')"
+                                   href="{% url 'saleslead-delete' saleslead.id %}">Usuń</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="menu2" role="tabpanel" aria-labelledby="menu2-tab">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form action="{% url 'saleslead-detail' saleslead.id %}" method="POST">
+                            {% csrf_token %}
+                            {{ forms.updateaddress.street|as_crispy_field }}
+                            {{ forms.updateaddress.city|as_crispy_field }}
+                            {{ forms.updateaddress.postcode|as_crispy_field }}
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    {{ forms.updateaddress.country|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mt-2">
+                                    <br>
+                                    <button type="button" class="btn btn-light js-create-country"
+                                            data-url="{% url 'country-create' %}">
+                                        Dodaj kraj
+                                    </button>
+                                </div>
+                            </div>
+                            {{ forms.updateaddress.latitude|as_crispy_field }}
+                            {{ forms.updateaddress.longtitude|as_crispy_field }}
+                            <button name='action' value='updateaddress' type="submit" class="btn btn-success">
+                                Zaktualizuj
+                            </button>
+                        </form>
+                        <div class="modal fade" id="modal-country">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6 mt-4">
+                        <div id="map" style="height: 500px; width: 600px"></div>
+                        <script type="text/javascript">
+                            var xcord = document.getElementById('{{ forms.updateaddress.latitude.auto_id }}').value
+                            var ycord = document.getElementById('{{ forms.updateaddress.longtitude.auto_id }}').value
+                            const mapDiv = document.getElementById("map");
+
+
+                            const map = L.map(mapDiv).setView([xcord, ycord], 3);
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+                            const resizeObserver = new ResizeObserver(() => {
+                                map.invalidateSize();
+                            });
+
+                            resizeObserver.observe(mapDiv);
+
+                            var marker = L.marker([xcord, ycord]).addTo(map);
+
+
+                            map.on('click', function (e) {
+                                if (marker) {
+                                    map.removeLayer(marker);
+                                }
+                                marker = new L.Marker(e.latlng, {draggable: true}).bindPopup(e.latlng.toString()).addTo(map);
+                                document.getElementById('{{ forms.updateaddress.latitude.auto_id }}').value = marker.getLatLng().lat;
+                                document.getElementById('{{ forms.updateaddress.longtitude.auto_id }}').value = marker.getLatLng().lng;
+                                marker.on('dragend', function (e) {
+                                    document.getElementById('{{ forms.updateaddress.latitude.auto_id }}').value = marker.getLatLng().lat;
+                                    document.getElementById('{{ forms.updateaddress.longtitude.auto_id }}').value = marker.getLatLng().lng;
+                                });
+
+                            });
+
+
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--CONTACT PERSON LIST-->
+        <div class="tab-pane fade" id="submenu1a" role="tabpanel" aria-labelledby="submenu1a-tab">
+            <div class="container">
+                <div class="row mt-2">
+                <a href="" class="btn btn-sm btn-primary">Dodaj</a>
+                    <div class="col-md-12" style="margin-top: 15px">
+                        <table class="table table-sm table-hover">
+                            <tr>
+                                <th>Imię</th>
+                                <th>Nazwisko</th>
+                                <th>Stanowisko</th>
+                                <th>E-mail</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            {% for person in contactpeople %}
+                                {% if person.default %}
+                                    <tr>
+                                        <td><strong>{{ person.first_name }}</strong></td>
+                                        <td><strong>{{ person.last_name }}</strong></td>
+                                        <td><strong>{{ person.position }}</strong></td>
+                                        <td><strong>{{ person.email }}</strong></td>
+                                        <td><a class="btn btn-sm btn-light"
+                                               href="{% url 'contactperson-update' person.id %}">Edytuj</a></td>
+                                        <td><a class="btn btn-sm btn-dark"
+                                               href="{% url 'contactperson-delete' person.id %}"
+                                               onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a></td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td>{{ person.first_name }}</td>
+                                        <td>{{ person.last_name }}</td>
+                                        <td>{{ person.position }}</td>
+                                        <td>{{ person.email }}</td>
+                                        <td><a class="btn btn-sm btn-light"
+                                               href="{% url 'contactperson-update' person.id %}">Edytuj</a></td>
+                                        <td><a class="btn btn-sm btn-dark"
+                                               href="{% url 'contactperson-delete' person.id %}"
+                                               onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a></td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="submenu2a" role="tabpanel" aria-labelledby="submenu2b-tab">
+            <div class="container">
+                <div class="col-md-12">
+                    <form action="{% url 'saleslead-detail' saleslead.id %}" method="POST">
+                        {% csrf_token %}
+                        {{ forms.contactpersonform|crispy }}
+                        <button name='action' value='contactpersonform' type="submit" class="btn btn-success">Dodaj
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="submenu1" role="tabpanel" aria-labelledby="submenu1-tab">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-sm table-hover">
+                            <tr>
+                                <th>Data</th>
+                                <th>Zaplanowane działanie</th>
+                                <th>Komentarz</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            {% for activity in activities %}
+                                <tr>
+                                    <td>{{ activity.date|date:'d E Y' }}</td>
+                                    <td>{{ activity.get_activity_type_display }}</td>
+                                    <td>{{ activity.activity_comment|truncatechars:30 }}</td>
+                                    <td><a class="btn btn-sm btn-light"
+                                           href="{% url 'plannedactivity-update' activity.id %}">Edytuj</a></td>
+                                    <td><a class="btn btn-sm btn-dark"
+                                           href="{% url 'plannedactivity-delete' activity.id %}"
+                                           onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="submenu2" role="tabpanel" aria-labelledby="submenu2-tab">
+            <div class="container">
+                <div class="col-md-12">
+                    <form action="{% url 'saleslead-detail' saleslead.id %}/" method="POST">
+                        {% csrf_token %}
+                        {{ forms.plannedactivitiesupdateform|crispy }}
+                        <button name='action' value='contactpersonadd' type="submit" class="btn btn-success">Dodaj
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="tab-pane fade" id="submenu3" role="tabpanel" aria-labelledby="submenu3-tab">
+            <div class="container">
+                <div class="col-md-12">
+                    <form action="{% url 'saleslead-detail' saleslead.id %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-0">
+                                {{ forms.plannedactivitiesaddform.date|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ forms.plannedactivitiesaddform.activity_type|as_crispy_field }}
+                            </div>
+                        </div>
+                        {{ forms.plannedactivitiesaddform.activity_comment|as_crispy_field }}
+                        <button name='action' value='plannedactivitiesaddform' type="submit" class="btn btn-success">
+                            Dodaj
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="submenu1b" role="tabpanel" aria-labelledby="submenu1b-tab">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-sm table-hover">
+                            <tr>
+                                <th>Data utworzenia</th>
+                                <th>Szczegóły</th>
+                                <th></th>
+                            </tr>
+                            {% for comment in comments %}
+                                <tr>
+                                    <td>{{ comment.created|date:'d E Y' }}</td>
+                                    <td>{{ comment.comment|truncatechars:30 }}</td>
+                                    <td><a class="btn btn-sm btn-light"
+                                           href="{% url 'comment-update' comment.id %}">Edytuj</a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-sm btn-dark" href="{% url 'comment-delete' comment.id %}"
+                                           onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="submenu2b" role="tabpanel" aria-labelledby="submenu2b-tab">
+            <div class="container">
+                <div class="col-md-12">
+                    <form class="commentadd" action="{% url 'saleslead-detail' saleslead.id %}" method="POST">
+                        {% csrf_token %}
+                        {{ forms.commentadd|crispy }}
+                        <p>Liczba znakow:<span>0</span>/100</p>
+                        <button name='action' value='commentadd' type="submit" class="btn btn-success">Dodaj
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>{% static 'js/tabs.js' %}</script>
+    {% include 'salesleads/footer_fixed.html' %}
+{% endblock %}
+

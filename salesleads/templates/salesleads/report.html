@@ -1,0 +1,110 @@
+{% extends 'salesleads/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <main role="main" class="container" style="margin-top: 15px;">
+        <form method="GET" action=".">
+            <div class="form-row">
+                <div class="form-group col-md-2 col-lg-2">
+                    <label for="publishDateMin">Data początkowa</label>
+                    <input type="date" class="form-control" id="publishDateMin" name="date_min" value="{{ date_min }}">
+                </div>
+                <div class="form-group col-md-2 col-lg-2">
+                    <label for="publishDateMax">Data końcowa</label>
+                    <input type="date" class="form-control" id="publishDateMax" name="date_max" value="{{ date_max }}">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="category">Użytkownik</label>
+                    <select id="category" class="form-control" name="user">
+                        <option selected>Wybierz...</option>
+                        {% for user in users %}
+                            <option value="{{ user }}" {% if user.username == user_get %} selected {% endif %}>{{ user }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <div class="container" style="margin-top: 15px;">
+            <div class="col-md-12">
+                <table class="table table-sm table-hover">
+                    <tr>
+                        <th style="width: 20%">Data</th>
+                        <th style="width: 15%">Lead</th>
+                        <th style="width: 15%">Akcja</th>
+                        <th style="width: 35%">Typ</th>
+                        <th style="width: 15%">Użytkownik</th>
+                    </tr>
+                    {% for t in page_obj %}
+                        <tr>
+                            <td>{{ t.0 }}</td>
+                            <td>{{ t.1 }}</td>
+                            <td>{{ t.2 }}</td>
+                            {% if t.6 == 'comment' %}
+                                {% if t.2 != 'Usunięte' and t.1 != None %}
+                                    <td><a href="{% url 'comment-update' t.5 %}">{{ t.3 }}</a></td>
+                                {% else %}
+                                    <td>{{ t.3 }}</td>
+                                {% endif %}
+                            {% elif t.6 == 'contactperson' %}
+                                {% if t.2 != 'Usunięte' and t.1 != None %}
+                                    <td><a href="{% url 'contactperson-update' t.5 %}">{{ t.3 }}</a></td>
+                                {% else %}
+                                    <td>{{ t.3 }}</td>
+                                {% endif %}
+                            {% elif t.6 == 'plannedactivity' %}
+                                {% if t.2 != 'Usunięte' and t.1 != None %}
+                                    <td><a href="{% url 'plannedactivity-update' t.5 %}">{{ t.3 }}</a></td>
+                                {% else %}
+                                    <td>{{ t.3 }}</td>
+                                {% endif %}
+                            {% elif t.6 == 'saleslead' %}
+                                {% if t.2 != 'Usunięte' and t.1 != None %}
+                                    <td><a href="{% url 'saleslead-detail' t.5 %}">{{ t.3 }}</a></td>
+                                {% else %}
+                                    <td>{{ t.3 }}</td>
+                                {% endif %}
+                            {% endif %}
+                            <td>{{ t.4 }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <nav aria-label="...">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item bg">
+                            <a class="page-link"
+                               href="?date_min={{ date_min }}&date_max={{ date_max }}&user={{ user_get }}&page={{ page_obj.previous_page_number }}"
+                               tabindex="-1">Poprzednia</a>
+                        </li>
+                        <li class="page-item"><a class="page-link"
+                                                 href="?date_min={{ date_min }}&date_max={{ date_max }}&user={{ user_get }}&page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="" tabindex="-1">Poprzednia</a>
+                        </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <a class="page-link" href="#">{{ page_obj.number }} <span class="sr-only">(current)</span></a>
+                    </li>
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link"
+                                                 href="?date_min={{ date_min }}&date_max={{ date_max }}&user={{ user_get }}&page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?date_min={{ date_min }}&date_max={{ date_max }}&user={{ user_get }}&page={{ page_obj.next_page_number }}">Następna</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="">Następna</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </main>
+    {% include 'salesleads/footer_sticky.html' %}
+{% endblock %}

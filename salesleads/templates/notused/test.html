@@ -1,0 +1,19 @@
+{% extends 'salesleads/base.html' %}
+{% block title %}Szczegóły {{ saleslead.company_name }}{% endblock %}
+{% block content %}
+
+<form class="login" method="POST" action="{% url 'saleslead-detail' saleslead.id %}">
+    {% csrf_token %}
+    {{ forms.login.as_p }}
+
+    <button name='action' value='login' type="submit">Sign in</button>
+</form>
+
+<form class="signup" method="POST" action="{% url 'saleslead-detail' saleslead.id %}">
+    {% csrf_token %}
+    {{ forms.signup.as_p }}
+
+    <button name='action' value='signup' type="submit">Sign up</button>
+</form>
+
+{% endblock %}

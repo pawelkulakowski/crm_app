@@ -1,0 +1,209 @@
+{% extends 'salesleads/base.html' %}
+
+{% block title %}Szczegóły {{ saleslead.company_name }}{% endblock %}
+{% block content %}
+
+
+    {#    <div class="container">#}
+    {#        <div class="row">#}
+    {#            <div class="col-md-6">#}
+    {#                <h1>Nazwa firmy: {{ saleslead.company_name }}</h1>#}
+    {#                <form action="{% url 'saleslead-detail' saleslead.id %}" method="POST">#}
+    {#                    {% csrf_token %}#}
+    {#                    {{ forms.updatelead.as_p }}#}
+    {#                    <button name='action' value='updatelead' type="submit">Zaktualizuj</button>#}
+    {#                </form>#}
+    {##}
+    {#            </div>#}
+    {#            <div class="col-md-6">#}
+    {#                <br><br><br>#}
+    {#                <form class="commentadd" action="{% url 'saleslead-detail' saleslead.id %}" method="POST">#}
+    {#                    {% csrf_token %}#}
+    {#                    {{ forms.commentadd.as_p }}#}
+    {#                    <p>Liczba znakow:<span>0</span>/100</p>#}
+    {#                    <button name='action' value='commentadd' type="submit">Dodaj</button>#}
+    {##}
+    {#                </form>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+    {#    <hr>#}
+    {#    <div class="container">#}
+    {#        Historia aktywności:#}
+    {#        <ol>#}
+    {#            {% for comment in comments %}#}
+    {#                <li>{{ comment.created }}{{ comment.comment }}</li>#}
+    {#            {% endfor %}#}
+    {#        </ol>#}
+    {#    </div>#}
+    <style>
+        body {
+            font-family: Arial;
+        }
+
+        /* Style the tab */
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+        /* Style the close button */
+        .topright {
+            float: right;
+            cursor: pointer;
+            font-size: 28px;
+        }
+
+        .topright:hover {
+            color: red;
+        }
+    </style>
+
+    <h1>{{ saleslead.company_name }}</h1>
+
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'information')" id="defaultOpen">Informacje ogólne</button>
+        <button class="tablinks" onclick="openCity(event, 'contact-details')">Dane adresowe</button>
+        <button class="tablinks" onclick="openCity(event, 'contact-people')">Osoby kontaktowe</button>
+        <button class="tablinks" onclick="openCity(event, 'planned-actions')">Zaplanowane działania</button>
+        <button class="tablinks" onclick="openCity(event, 'activities')">Aktywności</button>
+    </div>
+
+
+    <div class="tabcontent" id="information">
+        <div class="container">
+            <div class="col-md-12">
+                <form action="{% url 'saleslead-detail' saleslead.id %}" method="POST">
+                    {% csrf_token %}
+                    {{ forms.updatelead.as_p }}
+                    <button name='action' value='updatelead' type="submit">Zaktualizuj</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabcontent" id="contact-details">
+        <div class="container">
+            <div class="col-md-12">
+                <form action="{% url 'saleslead-detail' saleslead.id %}" method="POST">
+                    {% csrf_token %}
+                    {{ forms.updateaddress.as_p }}
+                    <button name='action' value='updateaddress' type="submit">Zaktualizuj</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container tabcontent" id="contact-people">
+        <form action="{% url 'saleslead-detail' saleslead.id %}" method="POST">
+            {% csrf_token %}
+            {{ forms.contactpersonadd.as_p }}
+            <button name='action' value='contactpersonadd' type="submit">Dodaj</button>
+        </form>
+    </div>
+
+    <div class="tabcontent" id="planned-actions">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-sm table-hover">
+                        <tr>
+                            <th>Data</th>
+                            <th>Zaplanowane działanie</th>
+                            <th>Komentarz</th>
+                            <th></th>
+                        </tr>
+                        {% for activity in activities %}
+                            <tr>
+                                <td>{{ activity.date }}</td>
+                                <td>{{ activity.get_activity_type_display }}</td>
+                                <td>{{ activity.comment|truncatechars:30 }}</td>
+                                <td><a class="btn btn-sm btn-light" href="">Edytuj</a></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container tabcontent" id="activities">
+        <div class="row">
+            <div class="col-md-6">
+                <br><br><br>
+                <form class="commentadd" action="{% url 'saleslead-detail' saleslead.id %}" method="POST">
+                    {% csrf_token %}
+                    {{ forms.commentadd.as_p }}
+                    <p>Liczba znakow:<span>0</span>/100</p>
+                    <button name='action' value='commentadd' type="submit">Dodaj</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <br><br><br>
+                <h3>Historia aktywności:</h3>
+                <ol>
+                    {% for comment in comments %}
+                        <li>{{ comment.created }}{{ comment.comment }}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        function openCity(evt, cityName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Get the element with id="defaultOpen" and click on it
+        document.getElementById("defaultOpen").click();
+    </script>
+
+
+
+{% endblock %}

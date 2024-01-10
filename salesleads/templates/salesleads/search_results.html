@@ -1,0 +1,23 @@
+{% extends 'salesleads/base.html' %}
+{% block title %}Wyniki wyszukiwania{% endblock %}
+{% block content %}
+    <div class="container">
+    <h3>Wyniki wyszukiwania:</h3>
+        <ol>
+            {% for result in object_list %}
+                {% if user == result.user %}
+                <li><a href="{% url 'saleslead-detail' result.id %}">{{ result }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    <h3>Wyniki wyszukiwania na pozostałych rynkach:</h3>
+        <ol>
+            {% for result in object_list %}
+                {% if user != result.user %}
+                <li>{{ result }}</li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </div>
+    {% include 'salesleads/footer_fixed.html' %}
+{% endblock %}

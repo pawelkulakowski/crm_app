@@ -1,0 +1,25 @@
+{% extends 'salesleads/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Zmiana właściciela lead'a{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="col-md-12">
+            <form action="" method="POST">
+            {% csrf_token %}
+                <div class="form-group col-md-4">
+                    <label for="category">Użytkownik</label>
+                    <select id="category" class="form-control" name="user">
+                        <option selected>Wybierz...</option>
+                        {% for user in users %}
+                            <option value="{{ user }}">{{ user }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            <div class="form-group col-md-4">
+                <input type="submit" class="btb btn-sm btn-dark" value="Zmień właściciela" onclick="return confirm('Czy na pewno chcesz przekazać?')">
+            </div>
+            </form>
+        </div>
+    </div>
+    {% include 'salesleads/footer_fixed.html' %}
+{% endblock %}

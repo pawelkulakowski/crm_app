@@ -1,0 +1,12 @@
+{% extends 'salesleads/base.html' %}
+{% block title %}Dodaj lead{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1>Dodaj komentarz dla: {{ saleslead.company_name }}</h1>
+        <form action="{% url 'comment-add' saleslead.id %}" method="POST">
+            {% csrf_token %}
+            {{ form.as_ul }}
+            <input type="submit" value="Dodaj">
+        </form>
+    </div>
+{% endblock %}

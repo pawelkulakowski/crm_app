@@ -1,0 +1,16 @@
+{% extends 'salesleads/base.html' %}
+{% block title %}Szczegóły {{ saleslead.company_name }}{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                {% include 'salesleads/../notused/saleslead_d.html' %}
+            </div>
+            <div class="col-md-6">
+                {% include 'salesleads/../notused/comment_add.html' %}
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

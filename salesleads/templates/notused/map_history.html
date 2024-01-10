@@ -1,0 +1,106 @@
+{% extends 'salesleads/base.html' %}
+{% load static %}
+{% block title %}Widok mapy{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="col-md-12 mt-4">
+            <div id="m" style="width: auto; height: 700px;"></div>
+
+            <script type="text/javascript">
+                var ColorIcon = L.Icon.extend({
+                    options: {
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    }
+                });
+                var m = L.map('m').setView([20, 20], 3);
+                var greenIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png'})
+                var redIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png'})
+                var violetIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png'})
+                var yellowIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png'})
+                var orangeIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png'})
+                var greyIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png'})
+                var blackIcon = new ColorIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png'})
+
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+
+
+                var blueLayer = new L.LayerGroup();
+                var redLayer = new L.LayerGroup();
+
+
+                {% for lead in object_list %}
+                    {% if user.id == 1 %}
+                        {% if lead.user.id == 1 %}
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: redIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a>');
+                            redLayer.addLayer(marker)
+                        {% elif lead.user.id == 3 %}
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greenIcon}).bindPopup('{{ lead }}');
+                            blueLayer.addLayer(marker)
+                        {% endif %}
+                    {% elif user.id == 3 %}
+                        {% if lead.user.id == 1 %}
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: redIcon}).bindPopup('{{ lead }}');
+                            redLayer.addLayer(marker
+                        {% elif lead.user.id == 3 %}
+                            var marker = L.marker([{{ lead.latitude }}, {{ lead.longtitude }}], {icon: greenIcon}).bindPopup('<a href="{% url 'saleslead-detail' lead.id %}">{{ lead }}</a>');
+                            blueLayer.addLayer(marker)
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                redLayer.addTo(m);
+                blueLayer.addTo(m);
+
+                var toggle = L.easyButton({
+                    states: [{
+                        icon: '<i class="fa fa-map-marker " style="color: red"></i>',
+                        stateName: 'remove-markers',
+                        onClick: function (control) {
+                            m.removeLayer(redLayer);
+                            control.state('add-markers');
+                        },
+                        title: 'remove markers'
+                    },
+                    {
+                        stateName: 'add-markers',
+                        icon: 'fa-map-marker',
+                        title: 'add random markers',
+                        onClick: function (control) {
+                            m.addLayer(redLayer);
+                            control.state('remove-markers');
+                        }
+                    }]
+                });
+                toggle.addTo(m);
+
+                var toggle = L.easyButton({
+                    states: [{
+                        icon: '<i class="fa fa-map-marker " style="color: blue"></i>',
+                        stateName: 'remove-markers',
+                        onClick: function (control) {
+                            m.removeLayer(blueLayer);
+                            control.state('add-markers');
+                        },
+                        title: 'remove markers'
+                    },
+                    {
+                        stateName: 'add-markers',
+                        icon: 'fa-map-marker',
+                        title: 'add random markers',
+                        onClick: function (control) {
+                            m.addLayer(blueLayer);
+                            control.state('remove-markers');
+                        }
+                    }]
+                });
+                toggle.addTo(m);
+
+            </script>
+        </div>
+    </div>
+    {% include 'salesleads/footer_fixed.html' %}
+{% endblock %}

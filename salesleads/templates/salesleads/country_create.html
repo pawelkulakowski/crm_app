@@ -1,0 +1,15 @@
+{% load crispy_forms_tags %}
+
+<form method="post" action="{% url 'country-create' %}" class="js-country-create-form">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h4 class="modal-title">Dodaj kraj</h4>
+    </div>
+    <div class="modal-body">
+        {{ form|crispy }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
+        <button type="submit" class="btn btn-dark">Dodaj</button>
+    </div>
+</form>

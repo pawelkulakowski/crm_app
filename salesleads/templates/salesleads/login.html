@@ -1,0 +1,17 @@
+{% extends 'salesleads/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Login{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="col-md-4 offset-md-4">
+            <form action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-primary">Zaloguj</button>
+            </form>
+        </div>
+    </div>
+    {% include 'salesleads/footer_fixed.html' %}
+{% endblock %}
